@@ -14,6 +14,8 @@
   header h1{font-size:15px;font-weight:500}
   #connectBtn{background:transparent;border:0.5px solid #2A2C33;color:#EDEDEF;font-size:12px;font-family:inherit;padding:5px 10px;border-radius:6px;cursor:pointer;margin-left:auto}
   #connectBtn.connected{border-color:#3ECF8E;color:#3ECF8E}
+  #githubBtn{background:transparent;border:0.5px solid #2A2C33;color:#EDEDEF;font-size:12px;font-family:inherit;padding:5px 10px;border-radius:6px;cursor:pointer;margin-left:8px}
+  #githubBtn.connected{border-color:#3ECF8E;color:#3ECF8E}
   #login{margin:auto;text-align:center;padding:24px}
   #login input{background:#1C1D22;border:0.5px solid #2A2C33;border-radius:8px;padding:10px 14px;color:#EDEDEF;font-size:14px;font-family:inherit;outline:none;width:220px}
   #login button{background:#3ECF8E;color:#04342C;border:none;border-radius:8px;padding:10px 18px;font-size:14px;font-weight:500;font-family:inherit;cursor:pointer;margin-left:8px}
@@ -41,7 +43,7 @@
   </div>
 
   <div id="chatView" class="hidden" style="display:flex;flex-direction:column;height:100%">
-    <header><div class="dot"></div><h1>Saage AI</h1><button id="connectBtn">Connect Supabase</button></header>
+    <header><div class="dot"></div><h1>Saage AI</h1><button id="connectBtn">Connect Supabase</button><button id="githubBtn">Connect GitHub</button></header>
     <div id="msgs"></div>
     <div id="inputwrap">
       <input type="file" id="fileInput" accept="image/*,.pdf,.txt,.csv,.docx" style="display:none" multiple>
@@ -166,13 +168,15 @@ inputEl.addEventListener('keydown', e => {
 
 const connectBtnEl = document.getElementById('connectBtn');
 connectBtnEl.addEventListener('click', () => {
-  // Kicks off the real OAuth flow — redirects to Supabase's own login/consent screen.
   window.location.href = `${SUPABASE_URL}/functions/v1/supabase-oauth?action=start`;
 });
 
+const githubBtnEl = document.getElementById('githubBtn');
+githubBtnEl.addEventListener('click', () => {
+  window.location.href = `${SUPABASE_URL}/functions/v1/github-oauth?action=start`;
+});
+
 async function checkConnectedStatus(){
-  // Reflects whether a Supabase account is currently linked, so the button
-  // shows "Connected" instead of "Connect Supabase" after a successful OAuth flow.
   try{
     const res = await fetch(`${SUPABASE_URL}/functions/v1/connection-status`, {
       headers: {'apikey': SUPABASE_ANON_KEY}
@@ -182,13 +186,20 @@ async function checkConnectedStatus(){
       connectBtnEl.textContent = 'Supabase connected';
       connectBtnEl.classList.add('connected');
     }
-  }catch(e){ /* silently ignore — button just stays in default state */ }
+    if(data.githubConnected){
+      githubBtnEl.textContent = data.githubUsername ? `GitHub: ${data.githubUsername}` : 'GitHub connected';
+      githubBtnEl.classList.add('connected');
+    }
+  }catch(e){ /* silently ignore — buttons just stay in default state */ }
 }
 
-// If redirected back here after approving the OAuth flow, reflect that immediately.
 if(new URLSearchParams(window.location.search).get('connected') === 'true'){
   connectBtnEl.textContent = 'Supabase connected';
   connectBtnEl.classList.add('connected');
+}
+if(new URLSearchParams(window.location.search).get('github_connected') === 'true'){
+  githubBtnEl.textContent = 'GitHub connected';
+  githubBtnEl.classList.add('connected');
 }
 </script>
 </body>
