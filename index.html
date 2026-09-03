@@ -12,6 +12,8 @@
   header{padding:16px;border-bottom:0.5px solid #2A2C33;display:flex;align-items:center;gap:8px}
   .dot{width:8px;height:8px;border-radius:50%;background:#3ECF8E}
   header h1{font-size:15px;font-weight:500}
+  #connectBtn{background:transparent;border:0.5px solid #2A2C33;color:#EDEDEF;font-size:12px;font-family:inherit;padding:5px 10px;border-radius:6px;cursor:pointer;margin-left:auto}
+  #connectBtn.connected{border-color:#3ECF8E;color:#3ECF8E}
   #login{margin:auto;text-align:center;padding:24px}
   #login input{background:#1C1D22;border:0.5px solid #2A2C33;border-radius:8px;padding:10px 14px;color:#EDEDEF;font-size:14px;font-family:inherit;outline:none;width:220px}
   #login button{background:#3ECF8E;color:#04342C;border:none;border-radius:8px;padding:10px 18px;font-size:14px;font-weight:500;font-family:inherit;cursor:pointer;margin-left:8px}
@@ -39,7 +41,7 @@
   </div>
 
   <div id="chatView" class="hidden" style="display:flex;flex-direction:column;height:100%">
-    <header><div class="dot"></div><h1>Saage AI</h1></header>
+    <header><div class="dot"></div><h1>Saage AI</h1><button id="connectBtn">Connect Supabase</button></header>
     <div id="msgs"></div>
     <div id="inputwrap">
       <input type="file" id="fileInput" accept="image/*,.pdf,.txt,.csv,.docx" style="display:none" multiple>
@@ -54,6 +56,7 @@
 // CONFIGURE THIS: your Supabase project URL and anon key (safe to expose client-side)
 const SUPABASE_URL = "https://vvwrkdlqestzvvtesyam.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ2d3JrZGxxZXN0enZ2dGVzeWFtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQwNjE1NDEsImV4cCI6MjA5OTYzNzU0MX0.nQsnbMmJCts3afMKylTqk2ZzASpvnBWq3vck1QNhQBc";
+
 let sessionToken = null;
 let userLabel = null;
 let msgs = [];
@@ -85,6 +88,7 @@ async function login(){
     loginEl.classList.add('hidden');
     chatViewEl.classList.remove('hidden');
     chatViewEl.style.display = 'flex';
+    checkConnectedStatus();
   }catch(e){
     loginErrEl.textContent = "Couldn't reach the server";
   }
@@ -159,6 +163,33 @@ sendEl.addEventListener('click', send);
 inputEl.addEventListener('keydown', e => {
   if(e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); send(); }
 });
+
+const connectBtnEl = document.getElementById('connectBtn');
+connectBtnEl.addEventListener('click', () => {
+  // Kicks off the real OAuth flow — redirects to Supabase's own login/consent screen.
+  window.location.href = `${SUPABASE_URL}/functions/v1/supabase-oauth?action=start`;
+});
+
+async function checkConnectedStatus(){
+  // Reflects whether a Supabase account is currently linked, so the button
+  // shows "Connected" instead of "Connect Supabase" after a successful OAuth flow.
+  try{
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/connection-status`, {
+      headers: {'apikey': SUPABASE_ANON_KEY}
+    });
+    const data = await res.json();
+    if(data.connected){
+      connectBtnEl.textContent = 'Supabase connected';
+      connectBtnEl.classList.add('connected');
+    }
+  }catch(e){ /* silently ignore — button just stays in default state */ }
+}
+
+// If redirected back here after approving the OAuth flow, reflect that immediately.
+if(new URLSearchParams(window.location.search).get('connected') === 'true'){
+  connectBtnEl.textContent = 'Supabase connected';
+  connectBtnEl.classList.add('connected');
+}
 </script>
 </body>
 </html>
