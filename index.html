@@ -1,856 +1,460 @@
-<!DOCTYPE html>  
-<html lang="en">  
-<head>  
-  <meta charset="UTF-8" />  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />  
-  <title>Saage AI</title>  
-  <style>  
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');  
-  
-    * {  
-      box-sizing: border-box;  
-      margin: 0;  
-      padding: 0;  
-    }  
-  
-    body {  
-      font-family: 'Inter', sans-serif;  
-      background: #0B0D14;  
-      color: #EDEDEF;  
-      height: 100vh;  
-      display: flex;  
-      flex-direction: column;  
-      overflow: hidden;  
-    }  
-  
-    #app {  
-      display: flex;  
-      flex-direction: column;  
-      height: 100vh;  
-      max-width: 480px;  
-      margin: 0 auto;  
-      width: 100%;  
-      background: #0B0D14;  
-      position: relative;  
-    }  
-  
-    /* ===== LOGIN ===== */  
-    #login {  
-      margin: auto;  
-      text-align: center;  
-      padding: 32px 24px;  
-      display: flex;  
-      flex-direction: column;  
-      align-items: center;  
-      gap: 20px;  
-      width: 100%;  
-      max-width: 340px;  
-    }  
-  
-    .login-logo {  
-      width: 96px;  
-      height: 96px;  
-      border-radius: 28px;  
-      background: linear-gradient(135deg, #00D9FF 0%, #7B61FF 50%, #FF3EC9 100%);  
-      display: flex;  
-      align-items: center;  
-      justify-content: center;  
-      font-weight: 800;  
-      font-size: 48px;  
-      color: #fff;  
-      box-shadow: 0 0 48px rgba(123, 97, 255, 0.5);  
-    }  
-  
-    .login-title {  
-      font-size: 26px;  
-      font-weight: 800;  
-      letter-spacing: 1px;  
-      background: linear-gradient(90deg, #00D9FF, #7B61FF, #FF3EC9);  
-      -webkit-background-clip: text;  
-      background-clip: text;  
-      color: transparent;  
-    }  
-  
-    #login .input-row {  
-      display: flex;  
-      gap: 8px;  
-      width: 100%;  
-    }  
-  
-    #login input {  
-      flex: 1;  
-      background: #161822;  
-      border: 1px solid #2A2C3D;  
-      border-radius: 12px;  
-      padding: 14px 16px;  
-      color: #EDEDEF;  
-      font-size: 15px;  
-      font-family: inherit;  
-      outline: none;  
-      transition: border 0.2s;  
-    }  
-  
-    #login input:focus {  
-      border-color: #7B61FF;  
-    }  
-  
-    #unlockBtn {  
-      width: 100%;  
-      background: linear-gradient(90deg, #00D9FF, #7B61FF, #FF3EC9);  
-      color: #04040A;  
-      border: none;  
-      border-radius: 12px;  
-      padding: 14px;  
-      font-size: 15px;  
-      font-weight: 700;  
-      font-family: inherit;  
-      cursor: pointer;  
-      transition: opacity 0.2s;  
-    }  
-  
-    #unlockBtn:hover {  
-      opacity: 0.9;  
-    }  
-  
-    #loginErr {  
-      color: #FF6B6B;  
-      font-size: 13px;  
-      min-height: 20px;  
-    }  
-  
-    .forgot-link {  
-      color: #6B6C8A;  
-      font-size: 12px;  
-      margin-top: 4px;  
-    }  
-  
-    /* ===== MAIN APP ===== */  
-    #mainApp {  
-      display: none;  
-      flex-direction: column;  
-      height: 100%;  
-      width: 100%;  
-    }  
-  
-    /* Header */  
-    .app-header {  
-      padding: 16px 20px 12px;  
-      border-bottom: 0.5px solid #22243A;  
-      display: flex;  
-      align-items: center;  
-      justify-content: space-between;  
-      flex-shrink: 0;  
-      background: #0B0D14;  
-    }  
-  
-    .app-header .brand {  
-      display: flex;  
-      align-items: center;  
-      gap: 10px;  
-    }  
-  
-    .app-header .brand .logo-sm {  
-      width: 32px;  
-      height: 32px;  
-      border-radius: 9px;  
-      background: linear-gradient(135deg, #00D9FF, #7B61FF, #FF3EC9);  
-      display: flex;  
-      align-items: center;  
-      justify-content: center;  
-      font-weight: 700;  
-      font-size: 16px;  
-      color: #fff;  
-      flex-shrink: 0;  
-    }  
-  
-    .app-header .brand .wordmark {  
-      font-size: 18px;  
-      font-weight: 800;  
-      background: linear-gradient(90deg, #00D9FF, #7B61FF, #FF3EC9);  
-      -webkit-background-clip: text;  
-      background-clip: text;  
-      color: transparent;  
-    }  
-  
-    .app-header .page-title {  
-      font-size: 16px;  
-      font-weight: 600;  
-      color: #EDEDEF;  
-    }  
-  
-    .app-header .header-actions {  
-      display: flex;  
-      gap: 6px;  
-    }  
-  
-    /* Page container */  
-    #pageContainer {  
-      flex: 1;  
-      overflow-y: auto;  
-      padding: 12px 16px 8px;  
-      display: flex;  
-      flex-direction: column;  
-    }  
-  
-    .page {  
-      display: none;  
-      flex-direction: column;  
-      height: 100%;  
-    }  
-  
-    .page.active {  
-      display: flex;  
-    }  
-  
-    /* ===== CHAT PAGE ===== */  
-    #page-chat .chat-messages {  
-      flex: 1;  
-      overflow-y: auto;  
-      display: flex;  
-      flex-direction: column;  
-      gap: 14px;  
-      padding-bottom: 8px;  
-    }  
-  
-    .chat-messages .row {  
-      display: flex;  
-    }  
-  
-    .chat-messages .row.user {  
-      justify-content: flex-end;  
-    }  
-  
-    .chat-messages .bubble {  
-      max-width: 80%;  
-      padding: 10px 14px;  
-      border-radius: 14px;  
-      font-size: 14px;  
-      line-height: 1.5;  
-      white-space: pre-wrap;  
-      position: relative;  
-    }  
-  
-    .chat-messages .row.user .bubble {  
-      background: linear-gradient(135deg, #1A2E4A, #241A4A);  
-      color: #EDEDEF;  
-    }  
-  
-    .chat-messages .row.ai .bubble {  
-      background: #161822;  
-      border: 0.5px solid #22243A;  
-    }  
-  
-    .chat-messages .bubble img {  
-      max-width: 100%;  
-      border-radius: 8px;  
-      display: block;  
-      margin-top: 6px;  
-    }  
-  
-    .chat-messages .copy-btn {  
-      margin-top: 6px;  
-      background: none;  
-      border: none;  
-      color: #6B6C8A;  
-      font-size: 11px;  
-      font-family: inherit;  
-      cursor: pointer;  
-      padding: 0;  
-      display: flex;  
-      align-items: center;  
-      gap: 4px;  
-    }  
-  
-    .chat-messages .copy-btn:hover {  
-      color: #9C9CE0;  
-    }  
-  
-    .chat-messages .status-bubble {  
-      display: flex;  
-      align-items: center;  
-      gap: 8px;  
-      padding: 10px 14px;  
-      font-size: 13px;  
-      color: #9C9CE0;  
-    }  
-  
-    .chat-messages .status-bubble .dots {  
-      display: flex;  
-      gap: 4px;  
-    }  
-  
-    .chat-messages .status-bubble .dots span {  
-      width: 5px;  
-      height: 5px;  
-      border-radius: 50%;  
-      background: #7B61FF;  
-      animation: blink 1.2s infinite;  
-    }  
-  
-    .chat-messages .status-bubble .dots span:nth-child(2) {  
-      animation-delay: 0.2s;  
-    }  
-    .chat-messages .status-bubble .dots span:nth-child(3) {  
-      animation-delay: 0.4s;  
-    }  
-  
-    @keyframes blink {  
-      0%, 80%, 100% { opacity: 0.3; }  
-      40% { opacity: 1; }  
-    }  
-  
-    /* Chat input */  
-    .chat-input-wrap {  
-      padding: 8px 0 4px;  
-      display: flex;  
-      gap: 8px;  
-      border-top: 0.5px solid #22243A;  
-      flex-shrink: 0;  
-      background: #0B0D14;  
-    }  
-  
-    .chat-input-wrap textarea {  
-      flex: 1;  
-      background: #161822;  
-      border: 0.5px solid #2A2C3D;  
-      border-radius: 10px;  
-      padding: 10px 12px;  
-      color: #EDEDEF;  
-      font-size: 14px;  
-      font-family: inherit;  
-      resize: none;  
-      outline: none;  
-      min-height: 44px;  
-      max-height: 100px;  
-    }  
-  
-    .chat-input-wrap textarea:focus {  
-      border-color: #7B61FF;  
-    }  
-  
-    .chat-input-wrap .attach-btn {  
-      background: #161822;  
-      border: 0.5px solid #2A2C3D;  
-      color: #8B8C93;  
-      border-radius: 10px;  
-      width: 44px;  
-      flex-shrink: 0;  
-      cursor: pointer;  
-      font-size: 20px;  
-      display: flex;  
-      align-items: center;  
-      justify-content: center;  
-    }  
-  
-    .chat-input-wrap .send-btn {  
-      background: linear-gradient(90deg, #00D9FF, #7B61FF);  
-      color: #04040A;  
-      border: none;  
-      border-radius: 10px;  
-      padding: 0 18px;  
-      font-size: 14px;  
-      font-weight: 700;  
-      font-family: inherit;  
-      cursor: pointer;  
-      white-space: nowrap;  
-    }  
-  
-    .chat-input-wrap .send-btn:disabled {  
-      opacity: 0.4;  
-    }  
-  
-    /* ===== SAVED CHATS ===== */  
-    .saved-search {  
-      background: #161822;  
-      border: 0.5px solid #2A2C3D;  
-      border-radius: 10px;  
-      padding: 10px 14px;  
-      color: #EDEDEF;  
-      font-size: 14px;  
-      font-family: inherit;  
-      outline: none;  
-      width: 100%;  
-      margin-bottom: 14px;  
-    }  
-  
-    .saved-search:focus {  
-      border-color: #7B61FF;  
-    }  
-  
-    .saved-item {  
-      background: #161822;  
-      border: 0.5px solid #22243A;  
-      border-radius: 12px;  
-      padding: 14px 16px;  
-      margin-bottom: 10px;  
-      display: flex;  
-      justify-content: space-between;  
-      align-items: center;  
-      cursor: pointer;  
-    }  
-  
-    .saved-item .info h4 {  
-      font-size: 14px;  
-      font-weight: 600;  
-      margin-bottom: 2px;  
-    }  
-  
-    .saved-item .info span {  
-      font-size: 12px;  
-      color: #6B6C8A;  
-    }  
-  
-    .saved-item .date {  
-      font-size: 11px;  
-      color: #6B6C8A;  
-    }  
-  
-    /* ===== CONNECTORS ===== */  
-    .connector-search {  
-      background: #161822;  
-      border: 0.5px solid #2A2C3D;  
-      border-radius: 10px;  
-      padding: 10px 14px;  
-      color: #EDEDEF;  
-      font-size: 14px;  
-      font-family: inherit;  
-      outline: none;  
-      width: 100%;  
-      margin-bottom: 14px;  
-    }  
-  
-    .connector-search:focus {  
-      border-color: #7B61FF;  
-    }  
-  
-    .connector-item {  
-      background: #161822;  
-      border: 0.5px solid #22243A;  
-      border-radius: 12px;  
-      padding: 12px 16px;  
-      margin-bottom: 8px;  
-      display: flex;  
-      justify-content: space-between;  
-      align-items: center;  
-    }  
-  
-    .connector-item .name {  
-      font-size: 14px;  
-      font-weight: 500;  
-    }  
-  
-    .connector-item .status {  
-      font-size: 12px;  
-      font-weight: 600;  
-      padding: 4px 10px;  
-      border-radius: 20px;  
-      background: #1A2E4A;  
-      color: #00D9FF;  
-    }  
-  
-    .connector-item .status.disconnected {  
-      background: #2A1A1A;  
-      color: #FF6B6B;  
-    }  
-  
-    .connector-item .status.connected {  
-      background: #1A2E4A;  
-      color: #00D9FF;  
-    }  
-  
-    /* ===== PORTFOLIO ===== */  
-    .portfolio-grid {  
-      display: grid;  
-      grid-template-columns: 1fr 1fr;  
-      gap: 10px;  
-      margin-bottom: 16px;  
-    }  
-  
-    .portfolio-card {  
-      background: #161822;  
-      border: 0.5px solid #22243A;  
-      border-radius: 12px;  
-      padding: 14px 12px;  
-      text-align: center;  
-    }  
-  
-    .portfolio-card .label {  
-      font-size: 11px;  
-      color: #6B6C8A;  
-      text-transform: uppercase;  
-      letter-spacing: 0.5px;  
-    }  
-  
-    .portfolio-card .value {  
-      font-size: 18px;  
-      font-weight: 700;  
-      margin-top: 4px;  
-    }  
-  
-    .portfolio-card .change {  
-      font-size: 12px;  
-      font-weight: 600;  
-      margin-top: 2px;  
-    }  
-  
-    .portfolio-card .change.positive {  
-      color: #00D9FF;  
-    }  
-    .portfolio-card .change.negative {  
-      color: #FF6B6B;  
-    }  
-  
-    .asset-item {  
-      background: #161822;  
-      border: 0.5px solid #22243A;  
-      border-radius: 10px;  
-      padding: 12px 14px;  
-      margin-bottom: 6px;  
-      display: flex;  
-      justify-content: space-between;  
-      align-items: center;  
-    }  
-  
-    .asset-item .asset-name {  
-      font-size: 14px;  
-      font-weight: 500;  
-    }  
-  
-    .asset-item .asset-value {  
-      font-size: 14px;  
-      font-weight: 600;  
-    }  
-  
-    .asset-item .asset-change {  
-      font-size: 12px;  
-      font-weight: 600;  
-      margin-left: 8px;  
-    }  
-  
-    .asset-item .asset-change.positive {  
-      color: #00D9FF;  
-    }  
-    .asset-item .asset-change.negative {  
-      color: #FF6B6B;  
-    }  
-  
-    .section-title {  
-      font-size: 15px;  
-      font-weight: 600;  
-      margin: 12px 0 8px;  
-    }  
-  
-    /* ===== BOTTOM NAV ===== */  
-    #bottomNav {  
-      display: flex;  
-      justify-content: space-around;  
-      align-items: center;  
-      background: #0B0D14;  
-      border-top: 0.5px solid #22243A;  
-      padding: 6px 0 12px;  
-      flex-shrink: 0;  
-    }  
-  
-    .nav-item {  
-      display: flex;  
-      flex-direction: column;  
-      align-items: center;  
-      gap: 2px;  
-      background: none;  
-      border: none;  
-      color: #6B6C8A;  
-      font-size: 10px;  
-      font-family: inherit;  
-      cursor: pointer;  
-      padding: 4px 12px;  
-      transition: color 0.2s;  
-      position: relative;  
-    }  
-  
-    .nav-item .nav-icon {  
-      font-size: 22px;  
-      line-height: 1;  
-    }  
-  
-    .nav-item.active {  
-      color: #00D9FF;  
-    }  
-  
-    .nav-item.active .nav-icon {  
-      color: #00D9FF;  
-    }  
-  
-    .nav-item .nav-label {  
-      font-weight: 500;  
-      letter-spacing: 0.3px;  
-    }  
-  
-    .hidden {  
-      display: none !important;  
-    }  
-  
-    /* Scrollbar */  
-    #pageContainer::-webkit-scrollbar,  
-    .chat-messages::-webkit-scrollbar {  
-      width: 3px;  
-    }  
-    #pageContainer::-webkit-scrollbar-track,  
-    .chat-messages::-webkit-scrollbar-track {  
-      background: transparent;  
-    }  
-    #pageContainer::-webkit-scrollbar-thumb,  
-    .chat-messages::-webkit-scrollbar-thumb {  
-      background: #2A2C3D;  
-      border-radius: 10px;  
-    }  
-  </style>  
-</head>  
-<body>  
-<div id="app">  
-  <!-- LOGIN -->  
-  <div id="login">  
-    <div class="login-logo">S</div>  
-    <div class="login-title">SAAGE AI</div>  
-    <div class="input-row">  
-      <input id="pw" type="password" placeholder="Enter password" />  
-    </div>  
-    <button id="unlockBtn">Unlock Saage AI</button>  
-    <div id="loginErr"></div>  
-    <div class="forgot-link">Forgot Password? Contact Admin.</div>  
-  </div>  
-  
-  <!-- MAIN APP -->  
-  <div id="mainApp">  
-    <!-- Header -->  
-    <header class="app-header">  
-      <div class="brand">  
-        <div class="logo-sm">S</div>  
-        <span class="wordmark">Saage AI</span>  
-      </div>  
-      <div class="page-title" id="pageTitle">Chat</div>  
-      <div class="header-actions">  
-        <!-- optional extra buttons -->  
-      </div>  
-    </header>  
-  
-    <!-- Page Container -->  
-    <div id="pageContainer">  
-      <!-- CHAT -->  
-      <div id="page-chat" class="page active">  
-        <div class="chat-messages" id="msgs"></div>  
-        <div class="chat-input-wrap">  
-          <input type="file" id="fileInput" accept="image/*,.pdf,.txt,.csv,.docx" style="display:none" multiple />  
-          <button class="attach-btn" id="attachBtn">+</button>  
-          <textarea id="input" rows="1" placeholder="Message Saage AI..."></textarea>  
-          <button class="send-btn" id="send">Send</button>  
-        </div>  
-      </div>  
-  
-      <!-- SAVED CHATS -->  
-      <div id="page-saved" class="page">  
-        <input class="saved-search" type="text" placeholder="Search saved chats.." />  
-        <div id="savedList"></div>  
-      </div>  
-  
-      <!-- CONNECTORS -->  
-      <div id="page-connectors" class="page">  
-        <input class="connector-search" type="text" placeholder="Search connectors.." />  
-        <div class="connector-item">  
-          <span class="name">Supabase</span>  
-          <span class="status connected" id="connectBtnStatus">Connected</span>  
-          <button id="connectBtn" style="display:none;">Supabase</button>  
-        </div>  
-        <div class="connector-item">  
-          <span class="name">GitHub</span>  
-          <span class="status disconnected" id="githubStatus">Disconnected</span>  
-          <button id="githubBtn" style="display:none;">GitHub</button>  
-        </div>  
-        <div class="connector-item">  
-          <span class="name">Gmail</span>  
-          <span class="status disconnected" id="gmailStatus">Disconnected</span>  
-          <button id="gmailBtn" style="display:none;">Gmail</button>  
-        </div>  
-        <div class="connector-item">  
-          <span class="name">Facebook</span>  
-          <span class="status disconnected" id="facebookStatus">Disconnected</span>  
-          <button id="facebookBtn" style="display:none;">Facebook</button>  
-        </div>  
-        <div class="connector-item">  
-          <span class="name">Instagram</span>  
-          <span class="status disconnected" id="instagramStatus">Disconnected</span>  
-          <button id="instagramBtn" style="display:none;">Instagram</button>  
-        </div>  
-        <div class="connector-item">  
-          <span class="name">TikTok</span>  
-          <span class="status disconnected" id="tiktokStatus">Disconnected</span>  
-          <button id="tiktokBtn" style="display:none;">TikTok</button>  
-        </div>  
-        <div class="connector-item">  
-          <span class="name">X / Twitter</span>  
-          <span class="status disconnected" id="twitterStatus">Disconnected</span>  
-          <button id="twitterBtn" style="display:none;">Twitter</button>  
-        </div>  
-        <div class="connector-item">  
-          <span class="name">Cowrywite</span>  
-          <span class="status connected">Connected</span>  
-        </div>  
-        <div class="connector-item">  
-          <span class="name">Supply App</span>  
-          <span class="status connected">Connected</span>  
-        </div>  
-        <div class="connector-item">  
-          <span class="name">MyStocks Africa</span>  
-          <span class="status connected">Connected</span>  
-        </div>  
-        <div class="connector-item">  
-          <span class="name">Infloware Finance</span>  
-          <span class="status connected">Connected</span>  
-        </div>  
-      </div>  
-  
-      <!-- PORTFOLIO -->  
-      <div id="page-portfolio" class="page">  
-        <div class="portfolio-grid">  
-          <div class="portfolio-card">  
-            <div class="label">Total Value</div>  
-            <div class="value">$12,450.00</div>  
-          </div>  
-          <div class="portfolio-card">  
-            <div class="label">Total Invested</div>  
-            <div class="value">$12,450.00</div>  
-          </div>  
-          <div class="portfolio-card">  
-            <div class="label">Total Profit</div>  
-            <div class="value">$1,470.00</div>  
-          </div>  
-          <div class="portfolio-card">  
-            <div class="label">Active Assets</div>  
-            <div class="value">6</div>  
-            <div class="change negative">-2.24%</div>  
-          </div>  
-          <div class="portfolio-card" style="grid-column: span 2;">  
-            <div class="label">Today's Change</div>  
-            <div class="value">-2.24%</div>  
-          </div>  
-        </div>  
-  
-        <div class="section-title">Your Assets</div>  
-        <div class="asset-item">  
-          <span class="asset-name">Stocks</span>  
-          <span><span class="asset-value">$426.60</span> <span class="asset-change negative">-4.19%</span></span>  
-        </div>  
-        <div class="asset-item">  
-          <span class="asset-name">Cryptocurrency</span>  
-          <span><span class="asset-value">$155,000</span> <span class="asset-change negative">-4.10%</span></span>  
-        </div>  
-        <div class="asset-item">  
-          <span class="asset-name">Forex</span>  
-          <span><span class="asset-value">$8,240</span> <span class="asset-change positive">+2.10%</span></span>  
-        </div>  
-        <div class="asset-item">  
-          <span class="asset-name">Real Estate</span>  
-          <span><span class="asset-value">$4,000</span> <span class="asset-change positive">+1.40%</span></span>  
-        </div>  
-        <div class="asset-item">  
-          <span class="asset-name">Gold</span>  
-          <span><span class="asset-value">$1,200</span> <span class="asset-change negative">-0.80%</span></span>  
-        </div>  
-        <div class="asset-item">  
-          <span class="asset-name">Cash</span>  
-          <span><span class="asset-value">$2,100</span> <span class="asset-change positive">+0.00%</span></span>  
-        </div>  
-      </div>  
-    </div>  
-  
-    <!-- Bottom Navigation -->  
-    <nav id="bottomNav">  
-      <button class="nav-item active" data-page="chat"><span class="nav-icon">💬</span><span class="nav-label">Chat</span></button>  
-      <button class="nav-item" data-page="saved"><span class="nav-icon">🗂️</span><span class="nav-label">Saved</span></button>  
-      <button class="nav-item" data-page="connectors"><span class="nav-icon">🔗</span><span class="nav-label">Connectors</span></button>  
-      <button class="nav-item" data-page="portfolio"><span class="nav-icon">📊</span><span class="nav-label">Portfolio</span></button>  
-    </nav>  
-  </div>  
-</div>  
-  
-<script>  
-  const PASSWORD = "saage";  
-  const login = document.getElementById("login");  
-  const mainApp = document.getElementById("mainApp");  
-  const pw = document.getElementById("pw");  
-  const loginErr = document.getElementById("loginErr");  
-  const msgs = document.getElementById("msgs");  
-  const input = document.getElementById("input");  
-  const send = document.getElementById("send");  
-  const fileInput = document.getElementById("fileInput");  
-  const savedList = document.getElementById("savedList");  
-  
-  document.getElementById("unlockBtn").onclick = unlock;  
-  pw.addEventListener("keydown", e => { if(e.key === "Enter") unlock(); });  
-  
-  function unlock(){  
-    if(pw.value === PASSWORD){  
-      login.style.display="none"; mainApp.style.display="flex"; showPage("chat");  
-      addMessage("ai","Welcome to Saage AI. How can I help you?");  
-    } else loginErr.textContent="Incorrect password.";  
-  }  
-  
-  function addMessage(role,text){  
-    const row=document.createElement("div"); row.className="row "+role;  
-    const bubble=document.createElement("div"); bubble.className="bubble"; bubble.textContent=text;  
-    row.appendChild(bubble); msgs.appendChild(row); msgs.scrollTop=msgs.scrollHeight;  
-  }  
-  
-  send.onclick=sendMessage;  
-  input.addEventListener("keydown",e=>{  
-    if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendMessage();}  
-  });  
-  input.addEventListener("input",()=>{input.style.height="auto";input.style.height=Math.min(input.scrollHeight,100)+"px";});  
-  
-  function sendMessage(){  
-    const text=input.value.trim(); if(!text)return;  
-    addMessage("user",text); input.value=""; input.style.height="44px";  
-    send.disabled=true;  
-    setTimeout(()=>{  
-      addMessage("ai","Saage AI received your message. Connect your AI backend/API to return real answers here.");  
-      send.disabled=false;  
-    },500);  
-  }  
-  
-  document.getElementById("attachBtn").onclick=()=>fileInput.click();  
-  fileInput.onchange=()=>{  
-    if(fileInput.files.length) addMessage("user","Attached: "+Array.from(fileInput.files).map(f=>f.name).join(", "));  
-  };  
-  
-  const savedChats=[  
-    ["Q3 Market Analysis","Ferd's fast built images of OZ","Monday"],  
-    ["WeMaster Trade Replay","Yesterday","Yesterday"],  
-    ["WeMaster's trip expenses","Business Plan","Monday"],  
-    ["Ferd's joint training plan","Entity Euting","Monday"],  
-    ["Cyptcy Update","Saturday","Saturday"],  
-    ["Ferd's fast built images of OZ","Supply App","Friday"],  
-    ["Ferd's joint training plan","MyStocks Africa","Friday"]  
-  ];  
-  savedChats.forEach((c,i)=>{  
-    const item=document.createElement("div");item.className="saved-item";  
-    item.innerHTML=`<div class="info"><h4>${c[0]}</h4><span>${c[1]}</span></div><span class="date">${c[2]}</span>`;  
-    item.onclick=()=>{showPage("chat");addMessage("ai","Opened saved chat: "+c[0]);};  
-    savedList.appendChild(item);  
-  });  
-  
-  document.querySelectorAll(".nav-item").forEach(btn=>btn.onclick=()=>showPage(btn.dataset.page));  
-  
-  function showPage(page){  
-    document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));  
-    document.getElementById("page-"+page).classList.add("active");  
-    document.querySelectorAll(".nav-item").forEach(b=>b.classList.toggle("active",b.dataset.page===page));  
-    document.getElementById("pageTitle").textContent=page.charAt(0).toUpperCase()+page.slice(1);  
-  }  
-  
-  document.querySelector(".saved-search").addEventListener("input",function(){  
-    const q=this.value.toLowerCase();  
-    document.querySelectorAll(".saved-item").forEach((item,i)=>item.style.display=  
-      savedChats[i].join(" ").toLowerCase().includes(q)?"flex":"none");  
-  });  
-</script>  
-</body>  
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Saage AI</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: #0B0D14; color: #EDEDEF; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+    #app { display: flex; flex-direction: column; height: 100vh; max-width: 480px; margin: 0 auto; width: 100%; background: #0B0D14; position: relative; }
+
+    #login { margin: auto; text-align: center; padding: 32px 24px; display: flex; flex-direction: column; align-items: center; gap: 20px; width: 100%; max-width: 340px; }
+    .login-logo { width: 96px; height: 96px; border-radius: 28px; background: linear-gradient(135deg, #00D9FF 0%, #7B61FF 50%, #FF3EC9 100%); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 48px; color: #fff; box-shadow: 0 0 48px rgba(123, 97, 255, 0.5); }
+    .login-title { font-size: 26px; font-weight: 800; letter-spacing: 1px; background: linear-gradient(90deg, #00D9FF, #7B61FF, #FF3EC9); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    #login .input-row { display: flex; gap: 8px; width: 100%; }
+    #login input { flex: 1; background: #161822; border: 1px solid #2A2C3D; border-radius: 12px; padding: 14px 16px; color: #EDEDEF; font-size: 15px; font-family: inherit; outline: none; transition: border 0.2s; }
+    #login input:focus { border-color: #7B61FF; }
+    #unlockBtn { width: 100%; background: linear-gradient(90deg, #00D9FF, #7B61FF, #FF3EC9); color: #04040A; border: none; border-radius: 12px; padding: 14px; font-size: 15px; font-weight: 700; font-family: inherit; cursor: pointer; }
+    #loginErr { color: #FF6B6B; font-size: 13px; min-height: 20px; }
+    .forgot-link { color: #6B6C8A; font-size: 12px; margin-top: 4px; }
+
+    #mainApp { display: none; flex-direction: column; height: 100%; width: 100%; }
+    .app-header { padding: 16px 20px 12px; border-bottom: 0.5px solid #22243A; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; background: #0B0D14; }
+    .app-header .brand { display: flex; align-items: center; gap: 10px; }
+    .app-header .brand .logo-sm { width: 32px; height: 32px; border-radius: 9px; background: linear-gradient(135deg, #00D9FF, #7B61FF, #FF3EC9); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; color: #fff; flex-shrink: 0; }
+    .app-header .brand .wordmark { font-size: 18px; font-weight: 800; background: linear-gradient(90deg, #00D9FF, #7B61FF, #FF3EC9); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .app-header .page-title { font-size: 16px; font-weight: 600; color: #EDEDEF; }
+
+    #pageContainer { flex: 1; overflow-y: auto; padding: 12px 16px 8px; display: flex; flex-direction: column; }
+    .page { display: none; flex-direction: column; height: 100%; }
+    .page.active { display: flex; }
+
+    #page-chat .chat-messages { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 14px; padding-bottom: 8px; }
+    .chat-messages .row { display: flex; }
+    .chat-messages .row.user { justify-content: flex-end; }
+    .chat-messages .bubble { max-width: 80%; padding: 10px 14px; border-radius: 14px; font-size: 14px; line-height: 1.5; white-space: pre-wrap; position: relative; }
+    .chat-messages .row.user .bubble { background: linear-gradient(135deg, #1A2E4A, #241A4A); color: #EDEDEF; }
+    .chat-messages .row.ai .bubble { background: #161822; border: 0.5px solid #22243A; }
+    .chat-messages .bubble img { max-width: 100%; border-radius: 8px; display: block; margin-top: 6px; }
+    .chat-messages .bubble .img-actions { display: flex; gap: 10px; margin-top: 6px; }
+    .chat-messages .bubble .img-actions a { font-size: 11px; color: #6B6C8A; text-decoration: none; display: flex; align-items: center; gap: 3px; }
+    .chat-messages .bubble .img-actions a:hover { color: #9C9CE0; }
+    .chat-messages .copy-btn { margin-top: 6px; background: none; border: none; color: #6B6C8A; font-size: 11px; font-family: inherit; cursor: pointer; padding: 0; display: flex; align-items: center; gap: 4px; }
+    .chat-messages .copy-btn:hover { color: #9C9CE0; }
+    .chat-messages .bubble a.src-link { color: #00D9FF; text-decoration: underline; }
+    .chat-messages .status-bubble { display: flex; align-items: center; gap: 8px; padding: 10px 14px; font-size: 13px; color: #9C9CE0; }
+    .chat-messages .status-bubble .dots { display: flex; gap: 4px; }
+    .chat-messages .status-bubble .dots span { width: 5px; height: 5px; border-radius: 50%; background: #7B61FF; animation: blink 1.2s infinite; }
+    .chat-messages .status-bubble .dots span:nth-child(2) { animation-delay: 0.2s; }
+    .chat-messages .status-bubble .dots span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes blink { 0%, 80%, 100% { opacity: 0.3; } 40% { opacity: 1; } }
+
+    .chat-input-wrap { padding: 8px 0 4px; display: flex; gap: 8px; border-top: 0.5px solid #22243A; flex-shrink: 0; background: #0B0D14; }
+    .chat-input-wrap textarea { flex: 1; background: #161822; border: 0.5px solid #2A2C3D; border-radius: 10px; padding: 10px 12px; color: #EDEDEF; font-size: 14px; font-family: inherit; resize: none; outline: none; min-height: 44px; max-height: 100px; }
+    .chat-input-wrap textarea:focus { border-color: #7B61FF; }
+    .chat-input-wrap .attach-btn { background: #161822; border: 0.5px solid #2A2C3D; color: #8B8C93; border-radius: 10px; width: 44px; flex-shrink: 0; cursor: pointer; font-size: 20px; display: flex; align-items: center; justify-content: center; }
+    .chat-input-wrap .send-btn { background: linear-gradient(90deg, #00D9FF, #7B61FF); color: #04040A; border: none; border-radius: 10px; padding: 0 18px; font-size: 14px; font-weight: 700; font-family: inherit; cursor: pointer; white-space: nowrap; }
+    .chat-input-wrap .send-btn:disabled { opacity: 0.4; }
+
+    .saved-search { background: #161822; border: 0.5px solid #2A2C3D; border-radius: 10px; padding: 10px 14px; color: #EDEDEF; font-size: 14px; font-family: inherit; outline: none; width: 100%; margin-bottom: 14px; }
+    .saved-item { background: #161822; border: 0.5px solid #22243A; border-radius: 12px; padding: 14px 16px; margin-bottom: 10px; }
+    .saved-item .content { font-size: 14px; line-height: 1.5; margin-bottom: 6px; }
+    .saved-item .date { font-size: 11px; color: #6B6C8A; }
+    .empty-state { color: #6B6C8A; font-size: 13px; text-align: center; padding: 40px 20px; line-height: 1.6; }
+
+    .connector-item { background: #161822; border: 0.5px solid #22243A; border-radius: 12px; padding: 12px 16px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+    .connector-item .name { font-size: 14px; font-weight: 500; }
+    .connector-item .status { font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 20px; background: #2A1A1A; color: #FF6B6B; cursor: pointer; }
+    .connector-item .status.connected { background: #1A2E4A; color: #00D9FF; cursor: default; }
+
+    .portfolio-note { color: #6B6C8A; font-size: 12px; line-height: 1.6; margin-bottom: 16px; padding: 12px; background: #161822; border-radius: 10px; border: 0.5px solid #22243A; }
+    .asset-item { background: #161822; border: 0.5px solid #22243A; border-radius: 10px; padding: 12px 14px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
+    .asset-item .asset-name { font-size: 14px; font-weight: 500; }
+    .asset-item .asset-status { font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 20px; }
+    .asset-item .asset-status.on { background: #1A2E4A; color: #00D9FF; }
+    .asset-item .asset-status.off { background: #22243A; color: #6B6C8A; }
+    .section-title { font-size: 15px; font-weight: 600; margin: 4px 0 8px; }
+
+    #bottomNav { display: flex; justify-content: space-around; align-items: center; background: #0B0D14; border-top: 0.5px solid #22243A; padding: 6px 0 12px; flex-shrink: 0; }
+    .nav-item { display: flex; flex-direction: column; align-items: center; gap: 2px; background: none; border: none; color: #6B6C8A; font-size: 10px; font-family: inherit; cursor: pointer; padding: 4px 12px; }
+    .nav-item .nav-icon { font-size: 22px; line-height: 1; }
+    .nav-item.active { color: #00D9FF; }
+    .nav-item .nav-label { font-weight: 500; letter-spacing: 0.3px; }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+<div id="app">
+  <div id="login">
+    <div class="login-logo">S</div>
+    <div class="login-title">SAAGE AI</div>
+    <div class="input-row"><input id="pw" type="password" placeholder="Enter password" /></div>
+    <button id="unlockBtn">Unlock Saage AI</button>
+    <div id="loginErr"></div>
+    <div class="forgot-link">Forgot Password? Contact Admin.</div>
+  </div>
+
+  <div id="mainApp">
+    <header class="app-header">
+      <div class="brand"><div class="logo-sm">S</div><span class="wordmark">Saage AI</span></div>
+      <div class="page-title" id="pageTitle">Chat</div>
+    </header>
+
+    <div id="pageContainer">
+      <div id="page-chat" class="page active">
+        <div class="chat-messages" id="msgs"></div>
+        <div class="chat-input-wrap">
+          <input type="file" id="fileInput" accept="image/*,.pdf,.txt,.csv,.docx" style="display:none" multiple />
+          <button class="attach-btn" id="attachBtn">+</button>
+          <textarea id="input" rows="1" placeholder="Message Saage AI..."></textarea>
+          <button class="send-btn" id="send">Send</button>
+        </div>
+      </div>
+
+      <div id="page-saved" class="page">
+        <div id="savedList"></div>
+      </div>
+
+      <div id="page-connectors" class="page">
+        <div id="connectorsList"></div>
+      </div>
+
+      <div id="page-portfolio" class="page">
+        <div class="portfolio-note">Real balances aren't shown here — MyStocks Africa, Cowrywise, and InfoWARE FinSpark all run in sandbox mode until each is separately certified for live trading. This reflects real connection status only, nothing fabricated.</div>
+        <div class="section-title">Finance Connections</div>
+        <div id="portfolioList"></div>
+      </div>
+    </div>
+
+    <nav id="bottomNav">
+      <button class="nav-item active" data-page="page-chat"><span class="nav-icon">💬</span><span class="nav-label">Chat</span></button>
+      <button class="nav-item" data-page="page-saved"><span class="nav-icon">💾</span><span class="nav-label">Saved</span></button>
+      <button class="nav-item" data-page="page-connectors"><span class="nav-icon">🔌</span><span class="nav-label">Connectors</span></button>
+      <button class="nav-item" data-page="page-portfolio"><span class="nav-icon">📊</span><span class="nav-label">Portfolio</span></button>
+    </nav>
+  </div>
+</div>
+
+<script>
+  const SUPABASE_URL = "https://vvwrkdlqestzvvtesyam.supabase.co";
+  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ2d3JrZGxxZXN0enZ2dGVzeWFtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQwNjE1NDEsImV4cCI6MjA5OTYzNzU0MX0.nQsnbMmJCts3afMKylTqk2ZzASpvnBWq3vck1QNhQBc";
+
+  let sessionToken = localStorage.getItem('saage_session') || null;
+  let userLabel = localStorage.getItem('saage_user') || null;
+  let msgs = [];
+
+  const loginEl = document.getElementById('login');
+  const mainAppEl = document.getElementById('mainApp');
+  const pwEl = document.getElementById('pw');
+  const unlockBtnEl = document.getElementById('unlockBtn');
+  const loginErrEl = document.getElementById('loginErr');
+  const msgsEl = document.getElementById('msgs');
+  const inputEl = document.getElementById('input');
+  const sendEl = document.getElementById('send');
+  const fileInputEl = document.getElementById('fileInput');
+  const attachBtnEl = document.getElementById('attachBtn');
+  const pageTitleEl = document.getElementById('pageTitle');
+
+  function enterApp(){
+    loginEl.classList.add('hidden');
+    mainAppEl.style.display = 'flex';
+    checkConnectedStatus();
+    switchPage('page-chat');
+  }
+
+  if(sessionToken){ enterApp(); }
+
+  async function login() {
+    const password = pwEl.value.trim();
+    if (!password) { loginErrEl.textContent = "Enter your password"; return; }
+    loginErrEl.textContent = "";
+    try {
+      const res = await fetch(`${SUPABASE_URL}/functions/v1/auth`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY },
+        body: JSON.stringify({ password })
+      });
+      const data = await res.json();
+      if (!res.ok || !data.token) { loginErrEl.textContent = "Wrong password"; return; }
+      sessionToken = data.token;
+      userLabel = data.userLabel || 'unknown';
+      localStorage.setItem('saage_session', sessionToken);
+      localStorage.setItem('saage_user', userLabel);
+      enterApp();
+    } catch (e) {
+      loginErrEl.textContent = "Couldn't reach the server";
+    }
+  }
+
+  unlockBtnEl.addEventListener('click', login);
+  pwEl.addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
+
+  // Matches both the free Pollinations fallback and Cloudflare-generated images served via our own function.
+  const IMAGE_URL_REGEX = /(https?:\/\/image\.pollinations\.ai\/prompt\/[^\s]+|https?:\/\/[^\s]+\/functions\/v1\/serve-image\?id=[^\s]+)/;
+  const URL_REGEX = /(https?:\/\/[^\s]+)/g;
+
+  function linkify(text){
+    const frag = document.createDocumentFragment();
+    let lastIndex = 0;
+    text.replace(URL_REGEX, (url, offset) => {
+      frag.appendChild(document.createTextNode(text.slice(lastIndex, offset)));
+      const a = document.createElement('a');
+      a.href = url; a.textContent = url; a.target = '_blank'; a.className = 'src-link';
+      frag.appendChild(a);
+      lastIndex = offset + url.length;
+      return url;
+    });
+    frag.appendChild(document.createTextNode(text.slice(lastIndex)));
+    return frag;
+  }
+
+  function render() {
+    msgsEl.innerHTML = '';
+    msgs.forEach(m => {
+      const row = document.createElement('div');
+      row.className = 'row ' + (m.role === 'user' ? 'user' : 'ai');
+      const b = document.createElement('div');
+      b.className = 'bubble';
+
+      const match = m.content.match(IMAGE_URL_REGEX);
+      if (match) {
+        const textPart = m.content.replace(match[0], '').trim();
+        if (textPart) {
+          const textNode = document.createElement('div');
+          textNode.appendChild(linkify(textPart));
+          b.appendChild(textNode);
+        }
+        const img = document.createElement('img');
+        img.src = match[0];
+        img.alt = 'Generated image';
+        b.appendChild(img);
+        const actions = document.createElement('div');
+        actions.className = 'img-actions';
+        const dl = document.createElement('a');
+        dl.href = match[0]; dl.download = 'saage-image.png'; dl.textContent = '⬇ Download';
+        const view = document.createElement('a');
+        view.href = match[0]; view.target = '_blank'; view.textContent = '↗ View full size';
+        actions.appendChild(dl); actions.appendChild(view);
+        b.appendChild(actions);
+      } else {
+        const textNode = document.createElement('div');
+        textNode.appendChild(linkify(m.content));
+        b.appendChild(textNode);
+      }
+
+      const copyBtn = document.createElement('button');
+      copyBtn.className = 'copy-btn';
+      copyBtn.textContent = '⧉ Copy';
+      copyBtn.addEventListener('click', () => {
+        navigator.clipboard.writeText(m.content).then(() => {
+          copyBtn.textContent = '✓ Copied';
+          setTimeout(() => { copyBtn.textContent = '⧉ Copy'; }, 1500);
+        });
+      });
+      b.appendChild(copyBtn);
+
+      row.appendChild(b);
+      msgsEl.appendChild(row);
+    });
+    msgsEl.scrollTop = msgsEl.scrollHeight;
+  }
+
+  let pendingFiles = [];
+  attachBtnEl.addEventListener('click', () => fileInputEl.click());
+  fileInputEl.addEventListener('change', () => { pendingFiles = Array.from(fileInputEl.files); });
+
+  function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result.split(',')[1]);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function detectStatusLabel(text, hasImages) {
+    const lower = text.toLowerCase();
+    if (hasImages && /\b(build|create|make|clone)\b.{0,50}\b(this app|this design|this page|this site|this ui|this website|everything)\b/i.test(text)) {
+      return { icon: '⚙️', label: 'Building your app and pushing to GitHub…' };
+    }
+    if (hasImages && /\b(edit|change|modify|remove|add|fix|improve|update|turn this into|make it|redo|recolor|adjust)\b/i.test(text)) {
+      return { icon: '🎨', label: 'Editing your image…' };
+    }
+    if (!hasImages && /\b(generate|create|make|draw|design)\b.{0,40}\b(an?\s+image|a\s+picture|a\s+photo|a\s+logo|an?\s+icon|an?\s+illustration|artwork)\b/i.test(text)) {
+      return { icon: '🎨', label: 'Generating your image…' };
+    }
+    if (!hasImages && /\b(search|look up|google|find out|verify|check|research|current|latest|today|right now|this week|news|score|price of|who is|what is|what time|compare|comparison|recommend)\b/i.test(lower)) {
+      return { icon: '🌐', label: 'Searching the web…' };
+    }
+    return { icon: '🧠', label: 'Thinking…' };
+  }
+
+  async function send() {
+    const text = inputEl.value.trim();
+    if (!text && !pendingFiles.length) return;
+    const fileNames = pendingFiles.map(f => f.name).join(', ');
+    msgs.push({ role: 'user', content: text + (fileNames ? ` [attached: ${fileNames}]` : '') });
+    inputEl.value = '';
+    sendEl.disabled = true;
+    render();
+
+    const attachments = await Promise.all(pendingFiles.map(async f => ({
+      mediaType: f.type,
+      base64: await fileToBase64(f)
+    })));
+    const hadImages = attachments.some(a => a.mediaType.startsWith('image/'));
+    pendingFiles = [];
+
+    const status = detectStatusLabel(text, hadImages);
+    const statusRow = document.createElement('div');
+    statusRow.className = 'row ai';
+    statusRow.id = 'statusRow';
+    statusRow.innerHTML = `<div class="bubble status-bubble">${status.icon} ${status.label} <span class="dots"><span></span><span></span><span></span></span></div>`;
+    msgsEl.appendChild(statusRow);
+    msgsEl.scrollTop = msgsEl.scrollHeight;
+
+    try {
+      const res = await fetch(`${SUPABASE_URL}/functions/v1/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${sessionToken}` },
+        body: JSON.stringify({ messages: msgs, attachments })
+      });
+      const data = await res.json();
+      msgs.push({ role: 'assistant', content: data.reply || '(no response)' });
+    } catch (e) {
+      msgs.push({ role: 'assistant', content: 'Something went wrong — try again.' });
+    }
+    document.getElementById('statusRow')?.remove();
+    sendEl.disabled = false;
+    render();
+  }
+
+  sendEl.addEventListener('click', send);
+  inputEl.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } });
+
+  const OAUTH_CONNECTORS = [
+    { key: 'connected', label: 'Supabase', fn: 'supabase-oauth' },
+    { key: 'githubConnected', label: 'GitHub', fn: 'github-oauth', nameField: 'githubUsername' },
+    { key: 'gmailConnected', label: 'Gmail', fn: 'gmail-oauth', nameField: 'gmailEmail' },
+    { key: 'metaConnected', label: 'Facebook', fn: 'meta-oauth', nameField: 'facebookPageName' },
+    { key: 'metaConnected', label: 'Instagram', fn: 'meta-oauth', nameField: 'instagramUsername' },
+    { key: 'tiktokConnected', label: 'TikTok', fn: 'tiktok-oauth', nameField: 'tiktokUsername' },
+    { key: 'twitterConnected', label: 'X / Twitter', fn: 'twitter-oauth', nameField: 'twitterUsername' },
+  ];
+  const FINANCE_CONNECTORS = [
+    { key: 'mystocksConnected', label: 'MyStocks Africa', secretHint: 'MYSTOCKS_API_KEY' },
+    { key: 'cowrywiseConnected', label: 'Cowrywise', secretHint: 'COWRYWISE_CLIENT_ID / COWRYWISE_CLIENT_SECRET' },
+    { key: 'finsparkConnected', label: 'InfoWARE FinSpark', secretHint: 'FINSPARK_API_KEY' },
+  ];
+
+  let statusCache = {};
+  async function fetchStatus(){
+    try {
+      const res = await fetch(`${SUPABASE_URL}/functions/v1/connection-status`, { headers: { 'apikey': SUPABASE_ANON_KEY } });
+      statusCache = await res.json();
+    } catch (e) { statusCache = {}; }
+    return statusCache;
+  }
+
+  async function checkConnectedStatus(){
+    const status = await fetchStatus();
+    renderConnectorsList(status);
+  }
+
+  function renderConnectorsList(status){
+    const list = document.getElementById('connectorsList');
+    list.innerHTML = '';
+    OAUTH_CONNECTORS.forEach(c => {
+      const isOn = !!status[c.key];
+      const nameSuffix = isOn && c.nameField && status[c.nameField] ? ` (${status[c.nameField]})` : '';
+      const row = document.createElement('div');
+      row.className = 'connector-item';
+      row.innerHTML = `<span class="name">${c.label}</span><span class="status ${isOn ? 'connected' : ''}">${isOn ? 'Connected' + nameSuffix : 'Connect'}</span>`;
+      if(!isOn){
+        row.querySelector('.status').addEventListener('click', () => {
+          window.location.href = `${SUPABASE_URL}/functions/v1/${c.fn}?action=start`;
+        });
+      }
+      list.appendChild(row);
+    });
+    FINANCE_CONNECTORS.forEach(c => {
+      const isOn = !!status[c.key];
+      const row = document.createElement('div');
+      row.className = 'connector-item';
+      row.innerHTML = `<span class="name">${c.label}</span><span class="status ${isOn ? 'connected' : ''}">${isOn ? 'Connected' : 'Disconnected'}</span>`;
+      if(!isOn){
+        row.querySelector('.status').addEventListener('click', () => {
+          alert(`${c.label} connects via an API key, not a login popup. Add it as a Supabase secret named: ${c.secretHint}`);
+        });
+      }
+      list.appendChild(row);
+    });
+  }
+
+  async function renderPortfolio(){
+    const list = document.getElementById('portfolioList');
+    list.innerHTML = '<div style="padding:20px;text-align:center;color:#6B6C8A">Loading…</div>';
+    const status = await fetchStatus();
+    list.innerHTML = '';
+    FINANCE_CONNECTORS.forEach(c => {
+      const isOn = !!status[c.key];
+      const row = document.createElement('div');
+      row.className = 'asset-item';
+      row.innerHTML = `<span class="asset-name">${c.label}</span><span class="asset-status ${isOn ? 'on' : 'off'}">${isOn ? '● Sandbox connected' : 'Not connected'}</span>`;
+      list.appendChild(row);
+    });
+  }
+
+  async function renderSaved(){
+    const list = document.getElementById('savedList');
+    list.innerHTML = '<div style="padding:20px;text-align:center;color:#6B6C8A">Loading…</div>';
+    try {
+      const res = await fetch(`${SUPABASE_URL}/functions/v1/list-memory`, {
+        headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${sessionToken}` }
+      });
+      const data = await res.json();
+      list.innerHTML = '';
+      if(!data.items || !data.items.length){
+        list.innerHTML = '<div class="empty-state">Nothing saved yet. In chat, say "remember this" or "save this" and it\'ll show up here — kept until you say "forget everything."</div>';
+        return;
+      }
+      data.items.forEach(item => {
+        const row = document.createElement('div');
+        row.className = 'saved-item';
+        const date = new Date(item.created_at).toLocaleDateString();
+        row.innerHTML = `<div class="content"></div><div class="date">${date}</div>`;
+        row.querySelector('.content').textContent = item.content;
+        list.appendChild(row);
+      });
+    } catch (e) {
+      list.innerHTML = '<div class="empty-state">Couldn\'t load saved items — try again.</div>';
+    }
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  const OAUTH_PARAM_MAP = { connected: 'Supabase', github_connected: 'GitHub', gmail_connected: 'Gmail', meta_connected: 'Facebook/Instagram', tiktok_connected: 'TikTok', twitter_connected: 'X/Twitter' };
+  // (Status refresh on load already re-fetches real state, so these params just confirm the redirect landed — actual display always comes from connection-status.)
+
+  const navItems = document.querySelectorAll('.nav-item');
+  const pages = { chat: document.getElementById('page-chat'), saved: document.getElementById('page-saved'), connectors: document.getElementById('page-connectors'), portfolio: document.getElementById('page-portfolio') };
+
+  function switchPage(pageId) {
+    Object.values(pages).forEach(p => p.classList.remove('active'));
+    const target = document.getElementById(pageId);
+    if (target) target.classList.add('active');
+    navItems.forEach(item => item.classList.toggle('active', item.dataset.page === pageId));
+    const titles = { 'page-chat': 'Chat', 'page-saved': 'Saved', 'page-connectors': 'Connectors', 'page-portfolio': 'Portfolio' };
+    pageTitleEl.textContent = titles[pageId] || 'Chat';
+    if(pageId === 'page-saved') renderSaved();
+    if(pageId === 'page-connectors') checkConnectedStatus();
+    if(pageId === 'page-portfolio') renderPortfolio();
+  }
+
+  navItems.forEach(item => {
+    item.addEventListener('click', () => { const pageId = item.dataset.page; if (pageId) switchPage(pageId); });
+  });
+</script>
+</body>
 </html>
