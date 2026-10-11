@@ -1,13 +1,21 @@
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
+import { createClient } from '@/lib/supabase/server';
 
-export default function SplashPage() {
+export default async function SplashPage() {
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (user) redirect('/home');
+
   return (
-    <main style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: 24, textAlign: 'center' }}>
-      <h1 style={{ fontSize: 32, marginBottom: 4 }}>Saage <span style={{ color: 'var(--orange)' }}>Barber</span></h1>
-      <p style={{ opacity: 0.7, marginBottom: 32 }}>Look Good. Feel Good. Book Easy.</p>
-      <div style={{ width: '100%', maxWidth: 320 }}>
-        <Link href="/register"><button className="btn-primary" style={{ marginBottom: 12 }}>Get Started</button></Link>
-        <Link href="/login"><button className="btn-primary" style={{ background: 'transparent', color: 'var(--text)', border: '1px solid #ccc' }}>Log In</button></Link>
+    <main className="center" style={{ maxWidth: 420, margin: '0 auto' }}>
+      <div className="logo">S</div>
+      <h1 style={{ fontSize: 34, fontWeight: 800 }}>Saage</h1>
+      <p className="muted">Hair &amp; Beauty Marketplace</p>
+      <p style={{ margin: '18px 0 28px' }}>Book top barbers &amp; hairstylists near you.<br />Fast. Easy. Secure.</p>
+      <div style={{ width: '100%' }}>
+        <Link href="/register"><button className="btn btn-gold">Get Started</button></Link>
+        <Link href="/login"><button className="btn btn-ghost">Log In</button></Link>
       </div>
     </main>
   );
