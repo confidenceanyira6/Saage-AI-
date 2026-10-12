@@ -23,7 +23,7 @@ export function Avatar({ src, name, size = 44 }: { src?: string | null; name?: s
 export function Stars({ value, count }: { value: number; count?: number }) {
   return (
     <span className="small">
-      <span className="goldtxt">&#9733;</span> {Number(value || 0).toFixed(1)}
+      <span className="starc">&#9733;</span> {Number(value || 0).toFixed(1)}
       {count != null ? <span className="muted"> ({count})</span> : null}
     </span>
   );

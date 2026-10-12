@@ -8,23 +8,23 @@ export const metadata = {
 export const viewport = {
   width: 'device-width',
   initialScale: 1,
-  themeColor: '#060B14',
+  themeColor: '#FFFFFF',
 };
 
-// Dark is the default brand look; users can switch to light in Profile.
+// Instagram-style light look is the default; users can switch to dark in Profile.
 // Applied before hydration so there is no theme flash.
 const themeInitScript = `
 (function(){
   try {
     var t = localStorage.getItem('saage-theme');
-    document.documentElement.setAttribute('data-theme', t === 'light' ? 'light' : 'dark');
+    document.documentElement.setAttribute('data-theme', t === 'dark' ? 'dark' : 'light');
   } catch (e) {}
 })();
 `;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" data-theme="dark" suppressHydrationWarning>
+    <html lang="en" data-theme="light" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>

@@ -12,7 +12,7 @@ export const useMe = () => useContext(MeCtx);
 export const isProviderRole = (r?: string | null) => r === 'male_barber' || r === 'female_stylist';
 
 export function applyTheme(t?: string | null) {
-  const light = t === 'light';
-  try { localStorage.setItem('saage-theme', light ? 'light' : 'dark'); } catch {}
-  document.documentElement.setAttribute('data-theme', light ? 'light' : 'dark');
+  const dark = t === 'dark';
+  try { localStorage.setItem('saage-theme', dark ? 'dark' : 'light'); } catch {}
+  document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
 }
